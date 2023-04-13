@@ -28,25 +28,27 @@ def grass(filteredDemArray):
     # Query GRASS 7 itself for its GISBASE
     startcmd = [grass7bin, '--config', 'path']
 
-    p = subprocess.Popen(startcmd, shell=True,
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = p.communicate()
-    if p.returncode != 0:
-        print('ERROR: %s' % err, file=sys.stderr)
-        print("ERROR: Cannot find GRASS GIS 7 " \
-              "start script (%s)" % startcmd, file=sys.stderr)
-        sys.exit(-1)
+    #p = subprocess.Popen(startcmd, shell=True,
+                         #stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # out, err = p.communicate()
+    #out = '/usr/local/grass'
+    # if p.returncode != 0:
+    #     #print('ERROR: %s' % err, file=sys.stderr)
+    #     print("ERROR: Cannot find GRASS GIS 7 " \
+    #           "start script (%s)" % startcmd, file=sys.stderr)
+    #     sys.exit(-1)
 
-    if sys.platform.startswith('linux'):
-        gisbase = out.decode("utf-8").strip('\n')
-    elif sys.platform.startswith('win'):
-        if out.decode("utf-8").find("OSGEO4W home is") != -1:
-            gisbase = out.decode("utf-8").strip().split('\r\n')[1]
-        else:
-            gisbase = out.decode("utf-8").strip('\r\n')
-        os.environ['GRASS_SH'] = os.path.join(gisbase, 'mysys', 'bin', 'sh.exe')
-    else:
-        gisbase = out.decode("utf-8").strip('\n\r')
+    # if sys.platform.startswith('linux'):
+    #     gisbase = out.decode("utf-8").strip('\n')
+    # elif sys.platform.startswith('win'):
+    #     if out.decode("utf-8").find("OSGEO4W home is") != -1:
+    #         gisbase = out.decode("utf-8").strip().split('\r\n')[1]
+    #     else:
+    #         gisbase = out.decode("utf-8").strip('\r\n')
+    #     os.environ['GRASS_SH'] = os.path.join(gisbase, 'mysys', 'bin', 'sh.exe')
+    # else:
+    #     gisbase = out.decode("utf-8").strip('\n\r')
+    gisbase = '/usr/local/grass'
 
     # Set environment variables
     os.environ['GISBASE'] = gisbase

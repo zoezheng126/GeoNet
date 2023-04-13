@@ -34,6 +34,8 @@ def read_dem_from_geotiff(demFileName, demFilePath):
 # Read geotif from file on a disk
 def read_geotif_filteredDEM():
     intif = Parameters.pmGrassGISfileName
+    print(f'intif: {intif}')
+    print(intif)
     ds = gdal.Open(intif, gdal.GA_ReadOnly)
     driver = ds.GetDriver()
     ary = ds.GetRasterBand(1).ReadAsArray()
@@ -46,6 +48,8 @@ def read_geotif_filteredDEM():
 
 # Read geotif from file on a disk
 def read_geotif_generic(intifpath, intifname):
+    print(f'intifpath : {intifpath}')
+    print(f'intifname : {intifname}')
     intif = os.path.join(intifpath, intifname)
     ds = gdal.Open(intif, gdal.GA_ReadOnly)
     prj = ds.GetProjection()
@@ -131,7 +135,8 @@ def write_geotif_filteredDEM(filteredDemArray, filepath, filename):
     outband = outDs.GetRasterBand(1)
     outband.WriteArray(filteredDemArray)
     outRasterSRS = osr.SpatialReference(wkt=Parameters.inputwktInfo)
-    authoritycode = outRasterSRS.GetAuthorityCode("PROJCS")
+    # authoritycode = outRasterSRS.GetAuthorityCode("26916")
+    authoritycode = '26916'
     outRasterSRS.ImportFromEPSG(int(authoritycode))
     outDs.SetProjection(outRasterSRS.ExportToWkt())
     outband.FlushCache()

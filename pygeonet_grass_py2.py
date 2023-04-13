@@ -114,12 +114,12 @@ def grass(demFileName, geonetResultsDir, pmGrassGISfileName):
                   output=os.path.join(geonetResultsDir,
                                       outputBAS_filename),\
                   format='GTiff')
-#def path_finder():
+# def path_finder():
 #    config = ConfigParser.RawConfigParser()
 #    cfg =[]
 #    for dirpath, subdirs, files in os.walk(os.getcwd()):
 #    	for y in subdirs:
-#		if y.endswith
+# 		if y.endswith
 #    	for x in files:
 #        	if x.endswith("_blah.cfg"):
 #            		cfg.append(os.path.join(dirpath, x))
@@ -135,13 +135,18 @@ def grass(demFileName, geonetResultsDir, pmGrassGISfileName):
 def main():
     abspath=os.path.abspath(__file__)
     geonet_dir = os.path.dirname(os.path.dirname(abspath))
+    #geonet_dir = os.path.dirname(abspath)
     config = ConfigParser.RawConfigParser()
-    config.read(os.path.join(geonet_dir,"GeoFlood.cfg"))
+    #config.read(os.path.join(geonet_dir,"GeoFlood.cfg"))
+    config.read(os.path.join(geonet_dir,"GeoNet_my_project.cfg"))
     projectname=config.get('Section','projectname')
     dem_name=config.get('Section','dem_name')
     demFileName=dem_name+'.tif'
-    geonetResultsDir=os.path.join(geonet_dir,"Outputs","GIS",projectname)
+    # geonetResultsDir=os.path.join(geonet_dir,"Outputs","GIS",projectname)
+    geonetResultsDir=os.path.join(geonet_dir,"GeoOutputs","GIS",projectname)
     pmGrassGISfileName = os.path.join(geonetResultsDir, "PM_filtered_grassgis.tif")
+    #pmGrassGISfileName = "PM_filtered_grassgis.tif"
+    print(demFileName,geonetResultsDir,pmGrassGISfileName)
     grass(demFileName, geonetResultsDir, pmGrassGISfileName)
 
 if __name__ == '__main__':

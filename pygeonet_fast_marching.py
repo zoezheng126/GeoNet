@@ -55,8 +55,9 @@ def fmm_list_creation(fmmY,fmmX):
 
 # Normalize Input Array
 def normalize(inputArray):
-    normalizedArray = inputArray-np.min(inputArray[~np.isnan(inputArray)])
-    normalizedArrayR = normalizedArray/np.max(normalizedArray[~np.isnan(normalizedArray)])
+    inputArray[np.isinf(inputArray)] = np.nan
+    normalizedArray = inputArray-np.nanmin(inputArray)
+    normalizedArrayR = normalizedArray/np.nanmax(normalizedArray)
     return normalizedArrayR
 
 
@@ -67,6 +68,7 @@ def Curvature_Preparation(curvatureDemArray):
         curvatureDemArray = normalize(curvatureDemArray)
         #if defaults.doPlot == 1:
         #    raster_plot(curvatureDemArray, 'Curvature DEM')
+        print(f'np.all(~np.isnan) : {np.all(np.isnan(curvatureDemArray))}')
         print('Curvature min: ' ,str(np.min(curvatureDemArray[~np.isnan(curvatureDemArray)])), \
               ' exp(min): ',str(np.exp(3*np.min(curvatureDemArray[~np.isnan(curvatureDemArray)]))))
         print('Curvature max: ' ,str(np.max(curvatureDemArray[~np.isnan(curvatureDemArray)])),\
@@ -198,6 +200,7 @@ def main():
     print(fastMarchingStartPointListFMM)
     # Computing the local cost function
     print('Preparing to calculate cost function')
+    print(f'curvatureDemArray: {curvatureDemArray}')
     curvatureDemArray = Curvature_Preparation(curvatureDemArray)
 
     # Calculate the local reciprocal cost (weight, or propagation speed in the
