@@ -51,9 +51,13 @@ def read_geotif_generic(intifpath, intifname):
     print(f'intifpath : {intifpath}')
     print(f'intifname : {intifname}')
     intif = os.path.join(intifpath, intifname)
+    assert os.path.exists(intif)
     ds = gdal.Open(intif, gdal.GA_ReadOnly)
     prj = ds.GetProjection()
-    crs = CRS.from_wkt(prj)
+    if prj:
+        crs = CRS.from_wkt(prj)
+    else:
+        crs = None
     ary = ds.GetRasterBand(1).ReadAsArray()
     return ary,crs,ds
 
