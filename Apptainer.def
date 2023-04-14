@@ -1,0 +1,70 @@
+Bootstrap: docker
+From: mundialis/grass-py3-pdal:7.8.7-debian
+Stage: build
+
+
+%environment
+    export OMPI_DIR=/sw/spack/delta-2022-03/apps/openmpi/4.1.2-gcc-11.2.0-37px7gc
+    export PATH="$OMPI_DIR/bin:$PATH"
+    export LD_LIBRARY_PATH="$OMPI_DIR/lib:$LD_LIBRARY_PATH"
+    export MANPATH="$OMPI_DIR/share/man:$MANPATH"
+    # Work around a problem that UCX has with unprivileged user namespaces
+    # See https://github.com/apptainer/apptainer/issues/769
+    export UCX_POSIX_USE_PROC_LINK=n
+
+%post
+    echo "Installing required packages..."
+
+    python3 -m pip install --upgrade pip && \
+    python3 -m pip install --upgrade Pillow && \
+    apt-get update && \
+    pip3 install six && \
+    pip3 install rasterio && \
+    pip3 install numpy && \
+    pip3 install matplotlib && \
+    pip3 install scipy && \
+    pip3 install statsmodels && \
+    pip3 install numba && \
+    pip3 install psutil && \
+    pip3 install dask && \
+    pip3 install distributed && \
+    git clone https://github.com/scikit-fmm/scikit-fmm.git && \
+    cd scikit-fmm && \
+    python3 setup.py install
+    pip install GDAL==$(gdal-config --version | awk -F'[.]' '{print $1"."$2}')
+
+    apt-get update && apt-get install -y wget git bash gcc gfortran g++ make file
+
+    echo "Installing Open MPI"
+    export OMPI_DIR=/opt/ompi
+    export OMPI_VERSION=4.1.2
+    export OMPI_URL="https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VERSION.tar.bz2"
+    mkdir -p /tmp/ompi
+    mkdir -p /opt
+    # Download
+    cd /tmp/ompi && wget -O openmpi-$OMPI_VERSION.tar.bz2 $OMPI_URL && tar -xjf openmpi-$OMPI_VERSION.tar.bz2
+    # Compile and install
+    cd /tmp/ompi/openmpi-$OMPI_VERSION && ./configure --prefix=$OMPI_DIR && make -j8 install
+
+    # Set env variables so we can compile our application
+    export PATH=$OMPI_DIR/bin:$PATH
+    export LD_LIBRARY_PATH=$OMPI_DIR/lib:$LD_LIBRARY_PATH
+
+    pip3 install mpi4py
+
+%runscript
+    echo "Container was created $NOW"
+    echo "Arguments received: $*"
+    exec echo "$@"
+
+
+%test
+    grep -q NAME=\"Debian\" /etc/os-release
+    echo "$?"
+
+%labels
+    Author Chenhui Zhang & Haozhen Zheng
+    Version v0.0.1
+
+%help
+    This is a container that integrates OpenMPI and GRASS 78.
